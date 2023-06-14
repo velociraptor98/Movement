@@ -8,7 +8,7 @@ public class CameraController : MonoBehaviour
     [SerializeField] float offsetValue = 5.0f;
     float rotationY;
     float rotationX;
-    [SerializeField] float minVerticalAngle = -30.0f;
+    [SerializeField] float minVerticalAngle = -10.0f;
     [SerializeField] float maxVerticalAngle = 45.0f;
     [SerializeField] Vector3 charOffset;
     void Start()

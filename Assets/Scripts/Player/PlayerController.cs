@@ -7,11 +7,13 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float moveSpeed = 5.0f;
     [SerializeField]CameraController cameraController;
     [SerializeField] private float rotationSpeed = 500.0f;
+    private Animator playerAnimator;
     Quaternion targetRotation;
-    void onAwake()
+    void Awake()
     {
         cameraController = Camera.main.GetComponent<CameraController>();
         targetRotation = transform.rotation;
+        playerAnimator = GetComponent<Animator>();
     }
     void Update()
     {
@@ -25,5 +27,7 @@ public class PlayerController : MonoBehaviour
             targetRotation = Quaternion.LookRotation(moveDirection);
         }
         transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
+        // Clamp values so animations are selected correctly.
+        playerAnimator.SetFloat("moveAmount", Mathf.Clamp01(Mathf.Abs(horizontal) + Mathf.Abs(vertical)),0.2f, Time.deltaTime);
     }
 }
