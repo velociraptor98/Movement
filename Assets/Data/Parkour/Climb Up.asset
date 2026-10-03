@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 66c62f5b7dd8f4e11bb10a8b47ed1cd0, type: 3}
+  m_Name: Climb Up
+  m_EditorClassIdentifier: Assembly-CSharp::ClimbUpAction
+  displayName: Climb Up
+  minHeight: 0.75
+  maxHeight: 2.8
+  maxStartDistance: 1.2
+  minTopDepth: 0.5
+  wallDistance: 0.35
+  reachHeight: 2
+  approachSpeed: 2
+  jumpTime: 0.35
+  hangTime: 0.25
+  pullTime: 0.8
+  standInset: 0.45
+  pullCrouch: 0.35
