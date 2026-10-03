@@ -6,7 +6,8 @@ using UnityEngine.InputSystem;
 public class PlayerController : MonoBehaviour
 {
     [SerializeField] private float moveSpeed = 5.0f;
-    [SerializeField]CameraController cameraController;
+    // Driven by the CinemachineBrain; its yaw defines camera-relative movement.
+    Transform cameraTransform;
     [SerializeField] private float rotationSpeed = 500.0f;
     private Animator playerAnimator;
     private CharacterController controller;
@@ -18,7 +19,7 @@ public class PlayerController : MonoBehaviour
 
     void Awake()
     {
-        cameraController = Camera.main.GetComponent<CameraController>();
+        cameraTransform = Camera.main.transform;
         targetRotation = transform.rotation;
         playerAnimator = GetComponent<Animator>();
         controller = GetComponent<CharacterController>();
@@ -31,7 +32,8 @@ public class PlayerController : MonoBehaviour
         float horizontal = move.x;
         float vertical = move.y;
         Vector3 moveInput = new Vector3(horizontal, 0.0f, vertical).normalized;
-        Vector3 moveDirection = cameraController.PlanarRotation * moveInput;
+        Quaternion planarRotation = Quaternion.Euler(0.0f, cameraTransform.eulerAngles.y, 0.0f);
+        Vector3 moveDirection = planarRotation * moveInput;
         if (!isGround())
         {
             ySpeed += Physics.gravity.y * Time.deltaTime;
