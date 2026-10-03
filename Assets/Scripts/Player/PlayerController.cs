@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {
@@ -13,6 +14,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] LayerMask ground;
     [SerializeField] Vector3 groundOffset;
     float ySpeed;
+    InputAction moveAction;
 
     void Awake()
     {
@@ -20,12 +22,14 @@ public class PlayerController : MonoBehaviour
         targetRotation = transform.rotation;
         playerAnimator = GetComponent<Animator>();
         controller = GetComponent<CharacterController>();
+        moveAction = InputSystem.actions.FindAction("Player/Move", throwIfNotFound: true);
     }
 
     void Update()
     {
-        float horizontal = Input.GetAxis("Horizontal");
-        float vertical = Input.GetAxis("Vertical");
+        Vector2 move = moveAction.ReadValue<Vector2>();
+        float horizontal = move.x;
+        float vertical = move.y;
         Vector3 moveInput = new Vector3(horizontal, 0.0f, vertical).normalized;
         Vector3 moveDirection = cameraController.PlanarRotation * moveInput;
         if (!isGround())
