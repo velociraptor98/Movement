@@ -144,7 +144,8 @@ public class FootPlacement : MonoBehaviour
 
     void OnAnimatorIK(int layerIndex)
     {
-        if (weight <= 0.0f) return;
+        // Locomotion IK belongs to the base layer; other IK layers (e.g. parkour poses) do their own.
+        if (layerIndex != 0 || weight <= 0.0f) return;
 
         float rootY = transform.position.y;
         if (!initialized)

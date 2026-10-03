@@ -21,4 +21,4 @@ MonoBehaviour:
   standInset: 0.45
   minSpeed: 1.5
   riseTime: 0.25
-  hipDrop: 0.12
+  hipDrop: 0.05

@@ -17,6 +17,51 @@ public sealed class ParkourPlan
     readonly List<float> times = new List<float>();
     public readonly List<LimbTarget> Limbs = new List<LimbTarget>();
     public readonly List<BodyOffset> BodyOffsets = new List<BodyOffset>();
+    // Key poses the body blends through, in time order. ParkourPose.None blends back to locomotion.
+    public readonly List<PoseKey> Poses = new List<PoseKey>();
+    // Where the head and chest turn to look, over time windows.
+    public readonly List<LookTarget> Looks = new List<LookTarget>();
+
+    // Optional animated clip for the whole move: the name of a state in the Parkour layer, played
+    // instead of the pose keys, with its playback time warped onto the plan by MotionMarkers.
+    public string Motion;
+    // (plan seconds, motion normalised time) pairs in order; plan time may run past Duration into
+    // the exit blend so the clip finishes as the move hands back to locomotion.
+    public readonly List<Vector2> MotionMarkers = new List<Vector2>();
+    public float MotionBlendIn = 0.12f;
+    // Which foot the move lands on, so the walk/run cycle can resume in step. Null leaves it alone.
+    public bool? ExitOnRightFoot;
+
+    public float MotionTime(float time)
+    {
+        if (MotionMarkers.Count == 0) return 0.0f;
+        if (time <= MotionMarkers[0].x) return MotionMarkers[0].y;
+        for (int i = 1; i < MotionMarkers.Count; i++)
+        {
+            Vector2 a = MotionMarkers[i - 1], b = MotionMarkers[i];
+            if (time <= b.x) return Mathf.Lerp(a.y, b.y, b.x > a.x ? (time - a.x) / (b.x - a.x) : 1.0f);
+        }
+        return MotionMarkers[MotionMarkers.Count - 1].y;
+    }
+
+    // Crossfades into a pose starting at `time`, over `blend` seconds.
+    public void AddPose(ParkourPose pose, float time, float blend) =>
+        Poses.Add(new PoseKey { Pose = pose, Time = time, Blend = blend });
+
+    // Writes each pose's weight at `time` into `weights` (indexed by ParkourPose; they sum to 1,
+    // with None meaning plain locomotion). Each key crossfades from whatever was blended before it.
+    public void EvaluatePoses(float time, float[] weights)
+    {
+        System.Array.Clear(weights, 0, weights.Length);
+        weights[(int)ParkourPose.None] = 1.0f;
+        foreach (PoseKey key in Poses)
+        {
+            if (time <= key.Time) break;
+            float blend = key.Blend > 0.0f ? Mathf.SmoothStep(0.0f, 1.0f, (time - key.Time) / key.Blend) : 1.0f;
+            for (int i = 0; i < weights.Length; i++) weights[i] *= 1.0f - blend;
+            weights[(int)key.Pose] += blend;
+        }
+    }
 
     public float Duration => times.Count > 0 ? times[times.Count - 1] : 0.0f;
     public int KeyCount => positions.Count;
@@ -73,6 +118,24 @@ public struct LimbTarget
         if (blend <= 0.0f) return 1.0f;
         return Mathf.SmoothStep(0.0f, 1.0f, Mathf.Min(time - start, end - time) / blend);
     }
+}
+
+public struct PoseKey
+{
+    public ParkourPose Pose;
+    public float Time;
+    public float Blend;
+}
+
+// A point the head and chest turn toward over a window.
+public struct LookTarget
+{
+    public Vector3 Position;
+    public float Start;
+    public float End;
+    public float Blend;
+
+    public float Weight(float time) => LimbTarget.WindowWeight(time, Start, End, Blend);
 }
 
 // Offset applied to the hips (Animator.bodyPosition) over a window, e.g. a tuck or pull-up crouch.

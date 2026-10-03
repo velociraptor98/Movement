@@ -1,7 +1,8 @@
 using UnityEngine;
 
-// Climbs onto an obstacle: hands grab the ledge and the body pulls up and over. Ledges above
-// `reachHeight` add a jump to a hang (feet braced on the wall) before the pull-up.
+// Climbs onto an obstacle: the body reaches up, grabs the ledge, pulls up and mantles over onto a
+// knee before standing. Ledges above `reachHeight` add a jump to a hang (feet braced on the wall)
+// before the pull-up.
 [CreateAssetMenu(menuName = "Movement/Parkour/Climb Up", fileName = "Climb Up")]
 public class ClimbUpAction : ParkourAction
 {
@@ -18,7 +19,8 @@ public class ClimbUpAction : ParkourAction
     [SerializeField] float pullTime = 0.8f;
     [Tooltip("How far onto the top the character ends up.")]
     [SerializeField] float standInset = 0.45f;
-    [SerializeField] float pullCrouch = 0.35f;
+    [Tooltip("Extra hip drop during the pull, on top of the poses.")]
+    [SerializeField] float pullCrouch = 0.0f;
 
     public ClimbUpAction()
     {
@@ -76,7 +78,20 @@ public class ClimbUpAction : ParkourAction
                 });
             }
         }
-        plan.BodyOffsets.Add(new BodyOffset { Offset = Vector3.down * pullCrouch, Start = hung, End = end, Blend = 0.2f });
+        if (pullCrouch > 0.0f)
+        {
+            plan.BodyOffsets.Add(new BodyOffset { Offset = Vector3.down * pullCrouch, Start = hung, End = end, Blend = 0.2f });
+        }
+
+        // Reach up, hang if the ledge is high, pull, mantle onto a knee, then crouch on top.
+        plan.AddPose(ParkourPose.ClimbReach, Mathf.Max(0.0f, atWall - 0.25f), 0.2f);
+        if (hangs) plan.AddPose(ParkourPose.ClimbHang, atWall + jumpTime * 0.6f, 0.15f);
+        plan.AddPose(ParkourPose.ClimbPull, hung, 0.2f);
+        plan.AddPose(ParkourPose.ClimbMantle, Mathf.Lerp(hung, overEdge, 0.6f), 0.2f);
+        plan.AddPose(ParkourPose.Crouch, overEdge, 0.2f);
+        // Eyes on the ledge until over it, then on the way ahead.
+        plan.Looks.Add(new LookTarget { Position = grip, Start = -1.0f, End = overEdge, Blend = 0.2f });
+        plan.Looks.Add(new LookTarget { Position = stand + obstacle.Inward * 3.0f + Vector3.up * 1.5f, Start = overEdge - 0.1f, End = end + 1.0f, Blend = 0.2f });
         return true;
     }
 }

@@ -24,4 +24,4 @@ MonoBehaviour:
   hangTime: 0.25
   pullTime: 0.8
   standInset: 0.45
-  pullCrouch: 0.35
+  pullCrouch: 0

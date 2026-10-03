@@ -14,7 +14,7 @@ public class StepUpAction : ParkourAction
     [SerializeField] float minSpeed = 1.5f;
     [Tooltip("Base time to rise onto the top; taller steps add to it.")]
     [SerializeField] float riseTime = 0.25f;
-    [SerializeField] float hipDrop = 0.12f;
+    [SerializeField] float hipDrop = 0.05f;
 
     public StepUpAction()
     {
@@ -45,6 +45,10 @@ public class StepUpAction : ParkourAction
             Start = plant - 0.1f, End = over + 0.05f, Blend = 0.1f,
         });
         plan.BodyOffsets.Add(new BodyOffset { Offset = Vector3.down * hipDrop, Start = plant, End = end, Blend = 0.15f });
+
+        // Drive the lead knee up onto the step, then hand back to the walk/run cycle.
+        plan.AddPose(ParkourPose.StepUp, Mathf.Max(0.0f, plant - 0.1f), 0.12f);
+        plan.AddPose(ParkourPose.None, over + 0.05f, Mathf.Max(0.1f, end - over));
         return true;
     }
 }

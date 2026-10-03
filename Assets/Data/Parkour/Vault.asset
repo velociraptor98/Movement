@@ -18,8 +18,7 @@ MonoBehaviour:
   maxStartDistance: 1.5
   maxDepth: 1.2
   takeoffDistance: 0.8
-  clearance: 0.35
+  clearance: 0.15
   minSpeed: 3
   maxDrop: 1.5
   maxRise: 0.3
-  tuckHeight: 0.35

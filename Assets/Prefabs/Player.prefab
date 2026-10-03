@@ -164,6 +164,20 @@ MonoBehaviour:
   solid:
     serializedVersion: 2
     m_Bits: 192
+  poseLayer: Parkour
+  exitBlend: 0.2
+  lookBodyWeight: 0.3
+  lookHeadWeight: 0.9
+  elbowOut: 0.25
+  kneeForward: 0.3
+  rightFootStrike: 0.72
+  leftFootStrike: 0.22
+  springFrequency: 2.5
+  springDamping: 0.45
+  dipGain: 1
+  leanGain: 150
+  maxDip: 0.08
+  maxLean: 12
 --- !u!114 &9129431016844919898
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -181,15 +195,26 @@ MonoBehaviour:
     m_Bits: 192
   maxStepUp: 0.5
   maxStepDown: 0.5
+  heelLength: 0.07
   toeLength: 0.13
-  swingLookAhead: 0.12
-  plantHeight: 0.04
+  plantSpeed: 0.15
+  plantSpeedRatio: 0.35
+  liftSpeedRatio: 0.6
   liftHeight: 0.07
-  swingSmoothTime: 0.06
+  maxLandingAdjust: 0.3
+  maxLockOffset: 0.45
+  retargetSpeed: 1.5
+  retargetHeightSpeed: 2
+  alignToSurface: 1
+  profileBehind: 0.5
+  profileAhead: 1.6
+  profileSpacing: 0.05
+  minRiser: 0.04
+  stairsSpeed: 0.85
+  stairsSprintSpeed: 1.3
   pelvisSmoothTime: 0.1
   maxPelvisDrop: 0.45
   fadeSpeed: 8
-  alignToSurface: 1
 --- !u!1001 &6954974589771272268
 PrefabInstance:
   m_ObjectHideFlags: 0
